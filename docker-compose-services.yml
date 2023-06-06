@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  ta_zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.1
+    container_name: ta_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - ta-kafka-network
+    volumes: 
+      - ta-zookeper-data:/var/lib/zookeeper/data
+      - ta-zookeper-log:/var/lib/zookeeper/log
+    
+  ta_kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: ta_kafka
+    ports:
+      - 8097:8097
+    networks:
+      - ta-kafka-network
+    depends_on:
+      - ta_zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: ta_zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8097,INTERNAL://ta_kafka:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+    volumes: 
+      - ta-kafka-log:/var/lib/kafka/data
+
+  ta_kafka_ui:
+    image: provectuslabs/kafka-ui
+    container_name: ta_kafka_ui
+    ports:
+      - 8080:8080
+    networks:
+      - ta-kafka-network
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=ta_kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=ta_zookeeper:2181
+
+networks:
+  ta-kafka-network:
+    driver: bridge
+
+volumes:
+  ta-zookeper-data:
+    driver: local
+  ta-zookeper-log:
+    driver: local
+  ta-kafka-log:
+    driver: local
