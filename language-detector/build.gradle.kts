@@ -35,6 +35,7 @@ dependencies {
 	testImplementation("org.springframework.kafka:spring-kafka-test")
 	implementation("org.slf4j:slf4j-api:2.0.7")
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1")
 }
 
 tasks.withType<KotlinCompile> {
