@@ -35,6 +35,14 @@ class TopicConfiguration {
     }
 
     @Bean
+    fun consumerOffsets(): NewTopic {
+        return TopicBuilder.name("__consumer_offsets")
+            .partitions(1)
+            .replicas(1)
+            .build()
+    }
+
+    @Bean
     fun objectTemplate(): KafkaTemplate<String, Any> {
         return KafkaTemplate<String, Any>(
             DefaultKafkaProducerFactory(
