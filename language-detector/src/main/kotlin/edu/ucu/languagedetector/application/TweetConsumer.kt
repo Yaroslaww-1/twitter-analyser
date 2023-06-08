@@ -7,6 +7,7 @@ import mu.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 import kotlinx.serialization.json.*
+import org.springframework.kafka.core.KafkaTemplate
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -14,12 +15,15 @@ import java.net.http.HttpResponse
 
 
 @Component
-class TweetConsumer {
+class TweetConsumer(
+    private val kafkaTemplate: KafkaTemplate<String, Any>
+) {
     private val logger = KotlinLogging.logger {}
     private val client = HttpClient.newBuilder().build()
 
     @KafkaListener(topics = ["tweets"])
-    fun greetingListener(tweets: List<Tweet>) {
+    fun tweetsListener(tweets: List<Tweet>) {
+        logger.info { "Started batch detection" }
         val request = tweets.associate { it.id to it.text }
 
         val req = HttpRequest.newBuilder()
@@ -31,5 +35,10 @@ class TweetConsumer {
         val body: Map<String, JsonElement> = Json.parseToJsonElement(response.body()).jsonObject
 
         val detectionResults = body.entries.map { LanguageDetectionResult(it.key.toLong(), it.value.toString()) }
+
+        for (detectionResult in detectionResults) {
+            kafkaTemplate.send("languagedetectionresults", detectionResult)
+        }
+        logger.info { "Finished batch detection" }
     }
 }
