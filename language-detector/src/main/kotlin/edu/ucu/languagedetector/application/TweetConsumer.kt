@@ -34,7 +34,7 @@ class TweetConsumer(
 
         val body: Map<String, JsonElement> = Json.parseToJsonElement(response.body()).jsonObject
 
-        val detectionResults = body.entries.map { LanguageDetectionResult(it.key.toLong(), it.value.toString()) }
+        val detectionResults = body.entries.map { LanguageDetectionResult(it.key.toLong(), it.value.jsonPrimitive.content) }
 
         for (detectionResult in detectionResults) {
             kafkaTemplate.send("languagedetectionresults", detectionResult)
