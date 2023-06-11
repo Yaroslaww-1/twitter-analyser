@@ -21,4 +21,16 @@ class StatisticController(
 
         return result
     }
+
+    @GetMapping("/sentiments")
+    fun getSentiments(): Map<String, Long> {
+        val result = mutableMapOf<String, Long>()
+
+        factoryBean.kafkaStreams
+            ?.store(StoreQueryParameters.fromNameAndType("sentimentcounts", QueryableStoreTypes.keyValueStore<String, Long>()))
+            ?.all()
+            ?.forEach { keyValue -> result[keyValue.key] = keyValue.value }
+
+        return result
+    }
 }
