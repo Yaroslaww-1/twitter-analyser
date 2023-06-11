@@ -1,5 +1,6 @@
 package edu.ucu.statisticbuilder.infrastructure.kafka
 
+import edu.ucu.statisticbuilder.domain.EntityDetectionResult
 import edu.ucu.statisticbuilder.domain.LanguageDetectionResult
 import edu.ucu.statisticbuilder.domain.SentimentDetectionResult
 import org.apache.kafka.common.serialization.Serde
@@ -20,6 +21,13 @@ class JsonSerdes {
         fun sentimentDetectionResult(): Serde<SentimentDetectionResult> {
             val serializer: JsonSerializer<SentimentDetectionResult> = JsonSerializer()
             val deserializer: JsonDeserializer<SentimentDetectionResult> = JsonDeserializer(SentimentDetectionResult::class.java, false)
+            deserializer.addTrustedPackages("*")
+            return Serdes.serdeFrom(serializer, deserializer)
+        }
+
+        fun entityDetectionResult(): Serde<EntityDetectionResult> {
+            val serializer: JsonSerializer<EntityDetectionResult> = JsonSerializer()
+            val deserializer: JsonDeserializer<EntityDetectionResult> = JsonDeserializer(EntityDetectionResult::class.java, false)
             deserializer.addTrustedPackages("*")
             return Serdes.serdeFrom(serializer, deserializer)
         }

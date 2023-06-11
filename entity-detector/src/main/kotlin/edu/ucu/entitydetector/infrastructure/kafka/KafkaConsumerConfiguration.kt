@@ -26,7 +26,7 @@ class KafkaConsumerConfiguration {
 
         return DefaultKafkaConsumerFactory(
             mapOf<String, Any>(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
+                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
                 ConsumerConfig.GROUP_ID_CONFIG to "entitydetector",
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
                 ConsumerConfig.MAX_POLL_RECORDS_CONFIG to 100

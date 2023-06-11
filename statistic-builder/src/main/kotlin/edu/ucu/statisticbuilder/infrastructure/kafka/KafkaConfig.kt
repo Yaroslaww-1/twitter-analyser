@@ -22,7 +22,7 @@ class KafkaConfig {
     @Bean(name = [KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME])
     fun kStreamsConfig(): KafkaStreamsConfiguration {
         return KafkaStreamsConfiguration(mapOf(
-            APPLICATION_ID_CONFIG to "statistic-builder",
+            APPLICATION_ID_CONFIG to "statistic-builder11",
             BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
             DEFAULT_KEY_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
             DEFAULT_VALUE_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
