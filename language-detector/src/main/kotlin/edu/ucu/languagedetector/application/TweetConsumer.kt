@@ -2,6 +2,7 @@ package edu.ucu.languagedetector.application
 
 import edu.ucu.languagedetector.domain.LanguageDetectionResult
 import edu.ucu.languagedetector.domain.Tweet
+import edu.ucu.languagedetector.infrastructure.evaluator.EvaluatorConfiguration
 import kotlinx.serialization.encodeToString
 import mu.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
@@ -16,7 +17,8 @@ import java.net.http.HttpResponse
 
 @Component
 class TweetConsumer(
-    private val kafkaTemplate: KafkaTemplate<String, Any>
+    private val kafkaTemplate: KafkaTemplate<String, Any>,
+    private val evaluatorConfiguration: EvaluatorConfiguration
 ) {
     private val logger = KotlinLogging.logger {}
     private val client = HttpClient.newBuilder().build()
@@ -27,7 +29,7 @@ class TweetConsumer(
         val request = tweets.associate { it.id to it.text }
 
         val req = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:5000/language"))
+            .uri(URI.create("${evaluatorConfiguration.host}/languages"))
             .POST(HttpRequest.BodyPublishers.ofString(Json.encodeToString(request)))
             .build()
         val response = client.send(req, HttpResponse.BodyHandlers.ofString())
