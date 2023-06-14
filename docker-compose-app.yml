@@ -73,6 +73,21 @@ services:
       - takafkanetwork
       - taservicesnetwork
 
+  ta_statistic_builder:
+    container_name: ta_statistic_builder
+    ports:
+      - 8000:8000
+    build:
+      context: ./statistic-builder
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
+      - SERVER_PORT=8000
+    networks:
+      - takafkanetwork
+      - taservicesnetwork
+
 networks:
   takafkanetwork:
     external:
