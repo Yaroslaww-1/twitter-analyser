@@ -22,7 +22,7 @@ class TweetReader(
     private var offset = 0
 
     init {
-        val file = ClassPathResource("tweets.csv").file
+        val file = ClassPathResource("tweets.csv").inputStream
         val formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss 'PDT' yyyy")
 
         val tweets = csvReader().readAll(file).map { t ->

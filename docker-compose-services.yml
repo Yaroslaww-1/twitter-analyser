@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   ta_zookeeper:
@@ -7,7 +7,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
-      - ta-kafka-network
+      - takafkanetwork
     volumes: 
       - ta-zookeper-data:/var/lib/zookeeper/data
       - ta-zookeper-log:/var/lib/zookeeper/log
@@ -18,7 +18,7 @@ services:
     ports:
       - 8097:8097
     networks:
-      - ta-kafka-network
+      - takafkanetwork
     depends_on:
       - ta_zookeeper
     environment:
@@ -36,14 +36,15 @@ services:
     ports:
       - 8080:8080
     networks:
-      - ta-kafka-network
+      - takafkanetwork
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=ta_kafka:9092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=ta_zookeeper:2181
 
 networks:
-  ta-kafka-network:
+  takafkanetwork:
+    name: takafkanetwork
     driver: bridge
 
 volumes:

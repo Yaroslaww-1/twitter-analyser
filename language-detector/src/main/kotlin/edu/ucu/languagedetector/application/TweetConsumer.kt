@@ -29,7 +29,7 @@ class TweetConsumer(
         val request = tweets.associate { it.id to it.text }
 
         val req = HttpRequest.newBuilder()
-            .uri(URI.create("${evaluatorConfiguration.host}/languages"))
+            .uri(URI.create("${evaluatorConfiguration.host}/language"))
             .POST(HttpRequest.BodyPublishers.ofString(Json.encodeToString(request)))
             .build()
         val response = client.send(req, HttpResponse.BodyHandlers.ofString())

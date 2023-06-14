@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  ta_producer:
+    container_name: ta_producer
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
+      - SERVER_PORT=8000
+    networks:
+      - takafkanetwork
+      - taservicesnetwork
+
+  taevaluator:
+    container_name: taevaluator
+    ports:
+      - 5000:5000
+    build:
+      context: ./evaluator
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - taservicesnetwork
+
+  ta_language_detector:
+    container_name: ta_language_detector
+    build:
+      context: ./language-detector
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
+      - SERVER_PORT=8000
+      - EVALUATOR_HOST=http://taevaluator:5000
+    networks:
+      - takafkanetwork
+      - taservicesnetwork
+
+networks:
+  takafkanetwork:
+    external:
+      name: takafkanetwork
+
+  taservicesnetwork:
+    driver: bridge
