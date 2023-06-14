@@ -16,8 +16,15 @@ services:
 
   taevaluator:
     container_name: taevaluator
-    ports:
-      - 5000:5000
+    build:
+      context: ./evaluator
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - taservicesnetwork
+
+  taevaluator1:
+    container_name: taevaluator1
     build:
       context: ./evaluator
       dockerfile: Dockerfile
@@ -35,6 +42,33 @@ services:
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
       - SERVER_PORT=8000
       - EVALUATOR_HOST=http://taevaluator:5000
+    networks:
+      - takafkanetwork
+      - taservicesnetwork
+
+  ta_sentiment_detector:
+    container_name: ta_sentiment_detector
+    build:
+      context: ./sentiment-detector
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
+      - SERVER_PORT=8000
+      - EVALUATOR_HOST=http://taevaluator1:5000
+    networks:
+      - takafkanetwork
+      - taservicesnetwork
+
+  ta_entity_detector:
+    container_name: ta_entity_detector
+    build:
+      context: ./entity-detector
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=ta_kafka:9092
+      - SERVER_PORT=8000
     networks:
       - takafkanetwork
       - taservicesnetwork
